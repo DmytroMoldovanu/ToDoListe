@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Todo bearbeiten</title>
+</head>
+<body>
+<h1>Todo bearbeiten</h1>
+
+<form th:action="@{/todos/{id}/edit(id=${todo.todoId})}" method="post">
+
+  <label for="titel">Titel:</label>
+  <input type="text" id="titel" name="titel" th:value="${todo.titel}" required><br>
+
+  <label for="beschreibung">Beschreibung:</label>
+  <textarea id="beschreibung" name="beschreibung" th:text="${todo.beschreibung}"></textarea><br>
+
+  <label for="ende">Fälligkeitsdatum:</label>
+  <input type="date" id="ende" name="ende" th:value="${todo.ende}"><br>
+
+  <!-- Lernplan-Auswahl -->
+  <div>
+    <label for="lehrplanId">Lernplan:</label>
+    <select id="lehrplanId" name="lehrplanId">
+      <option th:each="lernplan : ${lernplaene}" th:value="${lernplan.lernplanId}"
+              th:text="${lernplan.titel}" th:selected="${lernplan.lernplanId == todo.lehrplanId}"></option>
+    </select>
+  </div>
+
+  <!-- Projekt-Auswahl -->
+  <div>
+    <label for="projektid">Projekt:</label>
+    <select id="projektid" name="projektid">
+      <option th:each="projekt : ${projekte}" th:value="${projekt.projektId}"
+              th:text="${projekt.titel}" th:selected="${projekt != null && projekt.projektId == todo.projektId}"></option>
+    </select>
+  </div>
+
+  <!-- Status-Auswahl -->
+  <label for="status">Status:</label>
+  <select id="status" name="status">
+    <option value="Offen" th:selected="${todo.status == 'Offen'}">Offen</option>
+    <option value="In Bearbeitung" th:selected="${todo.status == 'In Bearbeitung'}">In Bearbeitung</option>
+    <option value="Abgeschlossen" th:selected="${todo.status == 'Abgeschlossen'}">Abgeschlossen</option>
+  </select><br>
+
+  <button type="submit">Speichern</button>
+</form>
+
+</body>
+</html>

@@ -1,0 +1,96 @@
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #f5f5f5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: url('/images/background.jpg'); /* Path to your background image */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh;
+}
+
+/* Container for the To-Do List Logo */
+.logo-container {
+    margin-top: 40px;
+    border: 3px solid #211453;
+    padding: 5px;
+    border-radius: 15px;
+    display: inline-block;
+}
+
+.logoToDo {
+    width: 400px; /* Larger width */
+    height: auto;
+}
+
+/* Container for the buttons */
+.button-container {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 40px;
+}
+
+.button-container button {
+    padding: 15px 30px;
+    font-size: 18px; /* Larger font size */
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    background: #1E73A7;
+    color: white;
+    transition: background-color 0.3s;
+}
+
+.button-container button:hover {
+    background-color: #001ccc;
+}
+
+/* Glow Text Effect */
+.glow-text {
+    font-family: 'Times New Roman', serif; /* Serif font for elegant look */
+    font-size: 24px; /* Adjusted font size */
+    color: #3498db; /* Bright blue color */
+    font-weight: bold; /* Bold text */
+    text-shadow: 0 0 10px #3498db, 0 0 20px #3498db, 0 0 30px #3498db, 0 0 40px #3498db, 0 0 50px #3498db; /* Glowing blue shadow */
+    text-align: center; /* Optional: center text */
+    padding: 10px; /* Optional: padding for better layout */
+}
+
+/* Container for the text/quote */
+.text-container {
+    margin-top: 40px;
+    padding: 15px; /* Reduced padding */
+    background-image: url('/images/sidebar.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    font-size: 16px; /* Reduced font size */
+    font-style: italic;
+    color: white;
+    text-align: center;
+    max-width: 700px; /* Increased max-width to make it longer horizontally */
+    width: 100%; /* Make it fill the available width */
+    margin-bottom: 40px; /* Added margin bottom to create space below */
+}
+
+
+/* Container for the Mischok logo */
+.logo-mischok-container {
+    margin-top: 8px; /* Increased margin-top for more space from top elements */
+    border: 3px solid #000; /* Black border for the Mischok logo */
+    padding: 15px;
+    border-radius: 15px;
+    display: inline-block;
+}
+
+/* Mischok logo */
+.logoMischok {
+    width: 250px; /* Larger width */
+    height: auto;
+}

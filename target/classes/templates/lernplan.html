@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lernpläne</title>
+    <link rel="stylesheet" th:href="@{/css/lernplan.css}">
+</head>
+<body>
+<div class="sidebar">
+    <div class="logo">
+        <img th:src="@{/images/mischok@cademy.png}" alt="Logo" class="logo-image" src="">
+    </div>
+    <h3>Menü</h3>
+    <a th:href="@{/dashboard}">Dashboard</a>
+    <a th:href="@{/kalendar}">Kalender</a>
+    <a th:href="@{/uebersicht}">Übersicht</a>
+    <a th:href="@{/lernplan}">Lernplan</a>
+    <a th:href="@{/projekt}">Projekt</a>
+    <a th:href="@{/user}">User</a>
+</div>
+
+<div class="main-content">
+    <div class="header">
+        <div class="title-container">
+            <div class="center-title">Lernpläne</div>
+        </div>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="logout">Logout</button>
+        </form>
+    </div>
+
+    <div class="content">
+        <table>
+            <thead>
+            <tr>
+                <th>Titel</th>
+                <th>Start</th>
+                <th>Ende</th>
+                <th>Aktionen</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- New row for creating a new Lernplan -->
+            <tr>
+                <form th:action="@{/lernplan/create}" method="post">
+                    <td><input type="text" name="titel" placeholder="Titel" required></td>
+                    <td><input type="date" name="start" required></td>
+                    <td><input type="date" name="ende" required></td>
+
+                    <!-- No dropdown for selecting personId -->
+
+                    <td><button type="submit">Erstellen</button></td>
+                </form>
+            </tr>
+
+            <!-- Existing Lernpläne display rows -->
+            <tr th:each="lernplan : ${lernplaene}">
+                <td th:text="${lernplan.titel}"></td>
+                <td th:text="${lernplan.start}"></td>
+                <td th:text="${lernplan.ende}"></td>
+                <td>
+                    <a th:href="@{/lernplan/{id}(id=${lernplan.lernplanId})}">Details</a> |
+                    <a th:href="@{/lernplan/edit/{id}(id=${lernplan.lernplanId})}">Bearbeiten</a> |
+                    <a th:href="@{/lernplan/delete/{id}(id=${lernplan.lernplanId})}">Löschen</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

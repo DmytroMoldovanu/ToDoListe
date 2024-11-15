@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lernplan Details</title>
+  <link rel="stylesheet" th:href="@{/css/lernplan.css}">
+</head>
+<body>
+<div class="sidebar">
+  <div class="logo">
+    <img th:src="@{/images/mischok@cademy.png}" alt="Logo" class="logo-image">
+  </div>
+  <h3>Menü</h3>
+  <a th:href="@{/dashboard}">Dashboard</a>
+  <a th:href="@{/kalendar}">Kalender</a>
+  <a th:href="@{/uebersicht}">Übersicht</a>
+  <a th:href="@{/lernplan}">Lernplan</a>
+  <a th:href="@{/projekt}">Projekt</a>
+  <a th:href="@{/user}">User</a>
+</div>
+
+<div class="main-content">
+  <div class="header">
+    <div class="title-container">
+      <div class="center-title">Lernplan Details</div>
+    </div>
+    <form th:action="@{/logout}" method="post">
+      <button type="submit" class="logout">Logout</button>
+    </form>
+  </div>
+
+  <div class="content">
+    <h2>Lernplan: <span th:text="${lernplan.titel}"></span></h2>
+    <p><strong>Start Date:</strong> <span th:text="${lernplan.start}"></span></p>
+    <p><strong>End Date:</strong> <span th:text="${lernplan.ende}"></span></p>
+
+    <h3>Todos</h3>
+    <table>
+      <thead>
+      <tr>
+        <th>Todo Titel</th>
+        <th>Beschreibung</th>
+        <th>Status</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="todo : ${todos}">
+        <td th:text="${todo.titel}"></td>
+        <td th:text="${todo.beschreibung}"></td>
+        <td th:text="${todo.status}"></td>
+      </tr>
+      </tbody>
+    </table>
+    <br>
+    <a th:href="@{/lernplan}">Zurück zur Übersicht</a>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,37 @@
+
+
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lernplan Bearbeiten</title>
+  <link rel="stylesheet" th:href="@{/css/lernplan.css}">
+</head>
+<body>
+
+<div th:insert="layout :: sidebar"></div>
+
+<div class="main-content">
+  <div th:insert="layout :: header"></div>
+
+  <div class="form-container">
+    <h2>Lernplan Bearbeiten</h2>
+    <form th:action="@{/lernplan/edit/{id}(id=${lernplan.lernplanId})}" method="post">
+      <label for="titel">Titel:</label>
+      <input type="text" id="titel" name="titel" th:value="${lernplan.titel}" required>
+
+      <label for="start">Startdatum:</label>
+      <input type="date" id="start" name="start" th:value="${lernplan.start}" required>
+
+      <label for="ende">Endedatum:</label>
+      <input type="date" id="ende" name="ende" th:value="${lernplan.ende}" required>
+
+      <button type="submit">Speichern</button>
+      <a th:href="@{/lernplan}">Abbrechen</a>
+    </form>
+  </div>
+</div>
+
+</body>
+</html>

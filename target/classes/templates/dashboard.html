@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+
+<html lang="de" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Individuelles Dashboard</title>
+    <!-- Verlinkung der externen CSS-Datei -->
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+</head>
+
+<body>
+<div class="sidebar">
+    <!-- Logo Section -->
+    <div class="logo">
+        <img th:src="@{/images/mischok@cademy.png}" alt="Logo" class="logo-image">
+    </div>
+    <h3>Menü</h3>
+    <a th:href="@{/dashboard}" class="menu-link" th:text="#{menu.home}">>Dashboard</a>
+    <a th:href="@{/kalendar}" class="menu-link" th:text="#{menu.kalender}">Kalender</a>
+    <a th:href="@{/uebersicht}" class="menu-link" th:text="#{menu.uebersicht}">Übersicht</a>
+    <a th:href="@{/lernplan}" class="menu-link" th:text="#{menu.lernplan}">Lernplan</a>
+    <a th:href="@{/projekt}" class="menu-link" th:text="#{menu.projekt}">Projekt</a>
+    <a th:href="@{/user}" class="menu-link" th:text="#{menu.user}">User</a>
+</div>
+
+<div class="main-content">
+    <!-- Header -->
+    <div class="header">
+        <h1></h1>
+        <div class="title-container">
+            <div class="center-title">To-Do-Liste</div>
+        </div>
+
+        <form action="/dashboard" method="get">
+            <select name="lang" onchange="this.form.submit()">
+                <option value="de" th:selected="${#locale.language == 'de'}">Deutsch</option>
+                <option value="en" th:selected="${#locale.language == 'en'}">English</option>
+                <option value="hr" th:selected="${#locale.language == 'hr'}">Kroatisch</option>
+                <option value="uk" th:selected="${#locale.language == 'uk'}">Ukrainisch</option>
+            </select>
+        </form>
+
+        <!-- Logout button -->
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="logout">Logout</button>
+        </form>
+    </div>
+
+    <div class ="header2">
+        <h2></h2>
+        <div class="title-container2">
+            <div class= "center-title2"><a th:text="#{menu.welcome}">Willkommen,</a> <span sec:authentication="name"></span>!</div>
+            </div>
+    </div>
+
+    <h1 th:text="${titel != null ? titel : 'Standard Titel'}">Title</h1>
+
+    <!-- Inhalt -->
+    <div class="content">
+        <div class="table-section">
+            <h2>To-Dos für Heute</h2>
+            <table>
+                <thead>
+                <tr>
+                    <th>Titel</th>
+                    <th>Beschreibung</th>
+                    <th>Fälligkeitsdatum</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="todo : ${todosMap['Mo']}">
+                    <td th:text="${todo != null ? todo.titel : 'Kein Todo'}"></td>
+                    <td th:text="${todo != null ? todo.beschreibung : 'Keine Beschreibung'}"></td>
+                    <td th:text="${todo != null ? #dates.format(todo.start, 'dd.MM.yyyy') : 'Kein Datum'}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Tabelle für die Wochen-To-Dos -->
+        <div class="weekly-todos">
+            <h2>Wochenübersicht</h2>
+            <table>
+                <tr>
+                    <th>Mo</th>
+                    <th>Di</th>
+                    <th>Mi</th>
+                    <th>Do</th>
+                    <th>Fr</th>
+                    <th>Sa</th>
+                    <th>So</th>
+                </tr>
+                <tr>
+                    <td th:each="todo : ${todosMap['Mo']}">
+                        <span th:text="${todo != null ? todo.titel : 'Kein Todo'}">Titel</span>
+                    </td>
+                    <td th:each="todo : ${todosMap['Di']}">
+                        <span th:text="${todo != null ? todo.titel : 'Kein Todo'}">Titel</span>
+                    </td>
+                    <td th:each="todo : ${todosMap['Mi']}">
+                        <span th:text="${todo != null ? todo.titel : 'Kein Todo'}">Titel</span>
+                    </td>
+                    <td th:each="todo : ${todosMap['Do']}">
+                        <span th:text="${todo != null ? todo.titel : 'Kein Todo'}">Titel</span>
+                    </td>
+                    <td th:each="todo : ${todosMap['Fr']}">
+                        <span th:text="${todo != null ? todo.titel : 'Kein Todo'}">Titel</span>
+                    </td>
+                    <td th:each="todo : ${todosMap['Sa']}">
+                        <span th:text="${todo != null ? todo.titel : 'Kein Todo'}">Titel</span>
+                    </td>
+                    <td th:each="todo : ${todosMap['So']}">
+                        <span th:text="${todo != null ? todo.titel : 'Kein Todo'}">Titel</span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

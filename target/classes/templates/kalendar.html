@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <!-- Link to external CSS -->
+    <link href="../static/kalendar.css" rel="stylesheet">
+    <title>Kalender</title>
+    <meta content="${_csrf.token}" name="_csrf"/>
+    <meta content="${_csrf.headerName}" name="_csrf_header"/>
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.9.0/main.min.css' rel='stylesheet'/>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.9.0/main.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.9.0/locales/de.js'></script>
+    <link rel="stylesheet" th:href="@{/css/kalendar.css}">
+    <style>
+        /* Global reset for consistent layout */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            height: 100vh;
+        }
+
+
+
+        /* Calendar container */
+        .calendar-container {
+            margin-left: 0px; /* Push the calendar to the right by the width of the sidebar */
+            padding: 20px;
+            width: calc(100% - 250px); /* Adjust calendar width based on the sidebar */
+            overflow: hidden;
+        }
+
+        #calendar {
+            max-width: 100%; /* Ensure calendar does not overflow */
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar on the left -->
+<div class="sidebar">
+    <!-- Logo Section -->
+    <div class="logo">
+        <img alt="Logo" class="logo-image" th:src="@{/images/mischok@cademy.png}">
+    </div>
+    <h3>Menü</h3>
+    <a th:href="@{/dashboard}">Dashboard</a>
+    <a th:href="@{/kalendar}">Kalender</a>
+    <a th:href="@{/uebersicht}">Übersicht</a>
+    <a th:href="@{/lernplan}">Lernplan</a>
+    <a th:href="@{/projekt}">Projekt</a>
+    <a th:href="@{/user}">User</a>
+</div>
+
+<div class="main-content">
+    <div class="header">
+        <h1></h1> <!-- Header updated to Kalendar -->
+        <div class="title-container">
+            <div class="center-title">Kalender</div> <!-- Center title updated to Kalendar -->
+        </div>
+        <!-- Logout button -->
+        <form method="post" th:action="@{/logout}">
+            <button class="logout" type="submit">Logout</button>
+        </form>
+    </div>
+
+    <!-- Calendar container -->
+    <div class="calendar-container">
+        <div id='calendar'></div>
+    </div>
+
+    <div class="todo-form">
+        <h3>Neues Todo erstellen</h3>
+        <form action="/api/todos" id="todoForm" method="POST">
+            <label for="todoTitel">Titel:</label>
+            <input id="todoTitel" name="titel" required type="text">
+
+            <label for="todoStart">Startdatum:</label>
+            <input id="todoStart" name="start" required type="date">
+
+            <label for="todoEnde">Enddatum:</label>
+            <input id="todoEnde" name="ende" type="date">
+
+            <label for="todoStatus">Status:</label>
+            <select id="todoStatus" name="status" required>
+                <option value="1">Offen</option>
+                <option value="2">In Bearbeitung</option>
+                <option value="3">Abgeschlossen</option>
+            </select>
+
+            <button type="submit">Todo erstellen</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+
+        // Abrufen der aktuellen Benutzer-ID
+        var currentPersonId = [[${#authentication.principal.personid}]];
+
+    // FullCalendar initialisieren
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        locale: 'de',
+        editable: true,  // Ermöglicht Drag-and-Drop für Events
+        events: '/api/todos',  // Holt die Todo-Daten aus der API
+
+        // Reaktion auf Klick auf ein Datum im Kalender
+        dateClick: function(info) {
+            var title = prompt('Titel des Todos:');
+            if (title) {
+                // CSRF-Token hinzufügen, wenn nötig
+                fetch('/api/todos', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        titel: title,
+                        start: info.dateStr,
+                        ende: info.dateStr,
+                        person: currentPersonId,  // Verwende die aktuelle Benutzer-ID
+                        status: 1  // Beispiel für Status "Offen"
+                    })
+                })
+                    .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            throw new Error('Error response from server: ' + response.status + ' ' + text);
+                        });
+                    }
+                    return response.json();
+                })
+                    .then(data => {
+                    console.log('Success:', data);
+
+                    // Hinzugefügtes Event sofort zum Kalender hinzufügen
+                    calendar.addEvent({
+                        id: data.id,
+                        title: data.titel,
+                        start: data.start,
+                        end: data.ende
+                    });
+                })
+                    .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+        },
+
+        // Ereignislöschung über Kalender
+        eventClick: function(info) {
+            if (confirm('Möchtest du dieses Todo löschen?')) {
+                fetch('/api/todos/' + info.event.id, {
+                    method: 'DELETE'
+                }).then(() => {
+                    info.event.remove();  // Entfernt das Ereignis aus dem Kalender
+                });
+            }
+        },
+
+        // Event-Drag-and-Drop: Funktion wird ausgelöst, wenn ein Event verschoben wird
+        eventDrop: function(info) {
+            if (!confirm("Bist du sicher, dass du dieses Event verschieben möchtest?")) {
+                info.revert();  // Falls nicht bestätigt, Event zurücksetzen
+                return;
+            }
+
+            // Neues Start- und Enddatum setzen
+            const newStart = info.event.start.toLocaleDateString('sv-SE');  // Format in YYYY-MM-DD
+            const newEnd = info.event.end
+            ? info.event.end.toLocaleDateString('sv-SE')
+            : newStart;
+
+            // Wenn das Event über das Enddatum hinausgeschoben wurde, setze Ende auf null
+            const endDate = info.event.end && newEnd > newStart ? newEnd : null;
+
+            // Daten an den Server senden, um die neuen Start-/Enddaten zu speichern
+            fetch('/api/todos/' + info.event.id, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    start: newStart,  // Neues Startdatum
+                    ende: endDate     // Neues Enddatum oder null, wenn außerhalb des Bereichs
+                })
+            })
+                .then(response => {
+                if (!response.ok) {
+                    throw new Error('Fehler beim Aktualisieren des Todos.');
+                }
+            })
+                .catch(error => {
+                console.error('Error:', error);
+                info.revert();  // Bei Fehler das Event zurücksetzen
+            });
+        }
+    });
+
+    // Kalender rendern
+    calendar.render();
+
+    // Formular-Daten absenden und per fetch an den Server senden
+    document.getElementById('todoForm').addEventListener('submit', function(event) {
+        event.preventDefault();  // Verhindert das Standardverhalten des Formulars
+
+        // Formulardaten sammeln
+        var title = document.getElementById('todoTitel').value;
+        var start = document.getElementById('todoStart').value;
+        var end = document.getElementById('todoEnde').value;
+        var status = document.getElementById('todoStatus').value;
+
+        // JSON-Daten für den POST-Request vorbereiten
+        var todoData = {
+            titel: title,
+            start: start,
+            ende: end,
+            person: currentPersonId,  // Verwende die aktuelle Benutzer-ID
+            status: status
+        };
+
+        // fetch API verwenden, um das Todo zu erstellen
+        fetch('/api/todos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(todoData)
+        })
+            .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => {
+                    throw new Error('Error response from server: ' + response.status + ' ' + text);
+                });
+            }
+            return response.json();
+        })
+            .then(data => {
+            console.log('Success:', data);
+
+            // Füge das neue Todo dem Kalender hinzu
+            calendar.addEvent({
+                id: data.todoid,  // Falls du die ID vom Server zurückbekommst
+                title: data.titel,
+                start: data.start,
+                end: data.ende
+            });
+
+            // Setze das Formular zurück
+            document.getElementById('todoForm').reset();
+        })
+            .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+    });
+</script>
+</body>
+</html>

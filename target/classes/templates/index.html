@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do Liste</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+</head>
+
+<body>
+
+<!-- To-Do List Logo -->
+<div class="logo-container">
+    <img th:src="@{/images/logo-ToDo.png}" alt="LogoToDo" class="logoToDo">
+</div>
+
+<!-- Button Container -->
+<div class="button-container">
+    <button th:onclick="'window.location.href=\'' + @{/login} + '\''">Anmelden</button>
+    <button th:onclick="'window.location.href=\'' + @{/registration} + '\''">Registrieren</button>
+</div>
+
+<!-- Text Container -->
+<div class="text-container">
+    <p class="glow-text">"Wenn du nicht für deine Zeit planst, wird die Zeit für dich planen."</p>
+    <footer class="glow-text">- Benjamin Franklin</footer>
+</div>
+
+<!-- Mischok Academy Logo -->
+<div class="logo-mischok-container">
+    <img th:src="@{/images/mischok-logo-schwarz.png}" alt="LogoMischok" class="logoMischok" width="359" height="117">
+</div>
+
+</body>
+</html>
+

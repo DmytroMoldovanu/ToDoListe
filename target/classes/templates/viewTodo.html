@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Todo Details</title>
+  <!-- Link to external CSS -->
+  <link rel="stylesheet" th:href="@{/uebersicht.css}">
+</head>
+<body>
+<!-- Sidebar on the left -->
+<div class="sidebar">
+  <div class="logo">
+    <img th:src="@{/images/mischok@cademy.png}" alt="Logo" class="logo-image">
+  </div>
+  <h3>Menü</h3>
+  <nav>
+    <a th:href="@{/dashboard}">Dashboard</a>
+    <a th:href="@{/kalendar}">Kalender</a>
+    <a th:href="@{/uebersicht}">Übersicht</a>
+    <a th:href="@{/lernplan}">Lernplan</a>
+    <a th:href="@{/projekt}">Projekt</a>
+    <a th:href="@{/user}">User</a>
+  </nav>
+</div>
+
+<div class="main-content">
+  <header class="header">
+    <h1>Todo Details</h1>
+    <div class="title-container">
+      <div class="center-title">Details anzeigen</div>
+    </div>
+    <!-- Logout button -->
+    <form th:action="@{/logout}" method="post">
+      <button type="submit" class="logout">Logout</button>
+    </form>
+  </header>
+
+  <!-- Todo Detail Section -->
+  <section>
+    <h2>Todo Informationen</h2>
+    <p><strong>Titel:</strong> <span th:text="${todo.titel}"></span></p>
+    <p><strong>Beschreibung:</strong> <span th:text="${todo.beschreibung}"></span></p>
+    <p><strong>Fälligkeitsdatum:</strong> <span th:text="${#temporals.format(todo.ende, 'dd.MM.yyyy')}"></span></p>
+
+    <!-- Startdatum anzeigen -->
+    <p><strong>Startdatum:</strong> <span th:text="${#temporals.format(todo.start, 'dd.MM.yyyy')}"></span></p>
+
+    <!-- Lernplan anzeigen -->
+    <p><strong>Lernplan:</strong>
+      <span th:text="${lernplanTitelMap[todo.lehrplanId] != null ? lernplanTitelMap[todo.lehrplanId] : 'Kein Lernplan'}"></span>
+    </p>
+
+    <!-- Projekt anzeigen -->
+
+    <p><strong>Projekt:</strong>
+      <span th:text="${projektTitelMap.get(todo.projektId) != null ? projektTitelMap.get(todo.projektId) : 'Kein Projekt'}"></span>
+    </p>
+
+
+
+    <!-- Status anzeigen -->
+    <p><strong>Status:</strong> <span th:text="${todo.status}"></span></p>
+
+    <a th:href="@{/uebersicht}" class="btn">Zurück zur Übersicht</a>
+  </section>
+</div>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projekt</title>
+    <link rel="stylesheet" th:href="@{/css/projekt.css}">
+    <style>
+        /* Flex styling for project list items */
+        .project-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 10px;
+        }
+
+        .project-info {
+            flex: 2;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex: 1;
+            justify-content: flex-end;
+        }
+
+        .action-buttons form,
+        .action-buttons button {
+            margin: 0;
+        }
+
+        /* Styling for modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: black;
+        }
+    </style>
+</head>
+<body>
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="logo">
+        <img th:src="@{/images/mischok@cademy.png}" alt="Logo" class="logo-image">
+    </div>
+    <h3>Menü</h3>
+    <a th:href="@{/dashboard}">Dashboard</a>
+    <a th:href="@{/kalendar}">Kalender</a>
+    <a th:href="@{/uebersicht}">Übersicht</a>
+    <a th:href="@{/lernplan}">Lernplan</a>
+    <a th:href="@{/projekt}">Projekt</a>
+    <a th:href="@{/user}">User</a>
+</div>
+
+<div class="main-content">
+    <div class="header">
+        <div class="title-container">
+            <div class="center-title">Meine Projekte</div>
+        </div>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="logout">Logout</button>
+        </form>
+    </div>
+
+    <!-- Liste eigener Projekte -->
+    <div class="project-list">
+        <h2>Eigene Projekte</h2>
+        <ul>
+            <li th:each="projekt : ${ownedProjects}" class="project-item">
+                <div class="project-info">
+                    <span th:text="${projekt.titel}">Projektname</span>
+                    <span th:text="${projekt.projektId}"></span>
+                </div>
+
+                <div class="action-buttons">
+                    <!-- Show Members Button -->
+                    <button th:if="${projekt != null}" onclick="openModal('[[${projekt.projektId}]]')">Mitglieder anzeigen</button>
+
+
+
+                    <!-- Add Member Form -->
+                    <form th:action="@{/projekt/addMember}" method="post" style="display: inline;">
+                        <input type="hidden" name="projektid" th:value="${projekt.projektId}" />
+                        <input type="text" name="username" placeholder="Benutzername hinzufügen" required />
+                        <button type="submit">Hinzufügen</button>
+                    </form>
+
+                    <!-- Delete Project Form -->
+                    <form th:action="@{/projekt/delete}" method="post" style="display: inline;">
+                        <input type="hidden" name="projektid" th:value="${projekt.projektId}" />
+                        <button type="submit" onclick="return confirm('Projekt wirklich löschen?');">Löschen</button>
+                    </form>
+                </div>
+
+                <!-- Modal for displaying members -->
+                <div th:if="${projekt != null}" id="modal-[[${projekt.projektId}]]" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeModal(${projekt.projektId})">&times;</span>
+                        <h3>Mitglieder von [[${projekt.titel}]]</h3>
+                        <ul>
+                            <li th:each="person : ${projekt.personen}">
+                                <span th:text="${person.username}"></span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </li>
+        </ul>
+
+        <!-- Create New Project Section -->
+        <div class="create-project">
+            <h2>Neues Projekt erstellen</h2>
+            <form th:action="@{/projekt/create}" method="post">
+                <label for="titel">Projekttitel:</label>
+                <input type="text" id="titel" name="titel" placeholder="Titel eingeben" required />
+                <label for="beschreibung">Beschreibung:</label>
+                <textarea id="beschreibung" name="beschreibung" placeholder="Beschreibung eingeben" required></textarea>
+                <button type="submit">Projekt erstellen</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Projekte anzeigen, bei denen der Benutzer nur Teilnehmer ist -->
+    <div class="project-list">
+        <h2>Projekte als Teilnehmer</h2>
+        <ul>
+            <li th:each="projekt : ${participantProjects}">
+                <span th:text="${projekt.titel}">Projektname</span>
+                <!-- Weitere Projektinformationen hier anzeigen -->
+            </li>
+        </ul>
+    </div>
+
+    <!-- JavaScript for Modal Display -->
+    <script>
+        function openModal(projektid) {
+            const modal = document.getElementById("modal-" + projektid);
+            if (modal) {
+                modal.style.display = "block";
+            } else {
+                console.error("Modal not found for project ID:", projektid);
+            }
+        }
+
+        function closeModal(projektid) {
+            const modal = document.getElementById("modal-" + projektid);
+            if (modal) {
+                modal.style.display = "none";
+            } else {
+                console.error("Modal not found for project ID:", projektid);
+            }
+        }
+
+        // Close modal if clicking outside of it
+        window.onclick = function(event) {
+            document.querySelectorAll(".modal").forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = "none";
+                }
+            });
+        };
+    </script>
+</body>
+</html>
